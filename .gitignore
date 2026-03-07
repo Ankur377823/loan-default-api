@@ -1,18 +1,9 @@
-# Virtual environment
 myenv/
-
-# Python cache
 __pycache__/
 *.pyc
-
-# Large files
 *.csv
 *.pkl
 *.joblib
-
-# Notebook checkpoints
 .ipynb_checkpoints/
-
-# OS files
 .DS_Store
 Thumbs.db
