@@ -1,7 +1,6 @@
 import pandas as pd
 import shap
 import uuid
-
 from schemas.user_input import LoanApplication
 from model.model_loder import ModelLoader
 from utils.logger import get_logger
@@ -15,24 +14,14 @@ MODEL_VERSION = "1.0.0"
 model = pipeline.named_steps["model"]
 preprocessor = pipeline.named_steps["preprocessor"]
 
-
 explainer = shap.Explainer(model)
 
-
-
-
 def predict_output(data: LoanApplication):
-
-
+   
     request_id = str(uuid.uuid4())
-
     try:
 
         logger.info(f"Request ID {request_id} - Prediction request received")
-
-        
-      
-       
         input_data = data.model_dump()
 
         df = pd.DataFrame([input_data])
@@ -40,9 +29,6 @@ def predict_output(data: LoanApplication):
         df = df[pipeline.feature_names_in_]
 
         logger.info(f"Request ID {request_id} - Input dataframe prepared")
-
-
-       
         prediction = int(pipeline.predict(df)[0])
 
         probabilities = pipeline.predict_proba(df)[0]
@@ -60,7 +46,6 @@ def predict_output(data: LoanApplication):
         logger.info(f"Request ID {request_id} - Prediction label: {prediction_label}")
 
     
-        
         X_processed = preprocessor.transform(df)
 
         shap_values = explainer(X_processed)
