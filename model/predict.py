@@ -15,15 +15,15 @@ MODEL_VERSION = "1.0.0"
 model = pipeline.named_steps["model"]
 preprocessor = pipeline.named_steps["preprocessor"]
 
-# SHAP explainer
+
 explainer = shap.Explainer(model)
 
 
-# Prediction Function
+
 
 def predict_output(data: LoanApplication):
 
-    # Generate unique request id
+
     request_id = str(uuid.uuid4())
 
     try:
@@ -31,19 +31,17 @@ def predict_output(data: LoanApplication):
         logger.info(f"Request ID {request_id} - Prediction request received")
 
         
-        # Convert request to dataframe
+      
        
         input_data = data.model_dump()
 
         df = pd.DataFrame([input_data])
 
-        # keep same order as training
         df = df[pipeline.feature_names_in_]
 
         logger.info(f"Request ID {request_id} - Input dataframe prepared")
 
-        
-        # Prediction
+
        
         prediction = int(pipeline.predict(df)[0])
 
@@ -53,9 +51,7 @@ def predict_output(data: LoanApplication):
 
         logger.info(f"Request ID {request_id} - Raw prediction: {prediction}")
 
-        
-        # Convert label
-       
+   
         if prediction == 1:
             prediction_label = "Fully Paid"
         else:
@@ -63,8 +59,7 @@ def predict_output(data: LoanApplication):
 
         logger.info(f"Request ID {request_id} - Prediction label: {prediction_label}")
 
-       
-        # SHAP Explanation
+    
         
         X_processed = preprocessor.transform(df)
 
@@ -74,7 +69,6 @@ def predict_output(data: LoanApplication):
 
         shap_list = shap_values.values[0]
 
-        # Top 5 most important features
         feature_importance = {
             feature: float(value)
             for feature, value in sorted(
@@ -86,9 +80,7 @@ def predict_output(data: LoanApplication):
 
         logger.info(f"Request ID {request_id} - SHAP explanation generated")
 
-        
-        # Response
-        
+    
         return {
 
             "request_id": request_id,
